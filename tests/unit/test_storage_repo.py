@@ -18,7 +18,9 @@ def make_session():
 
 
 def sample_event() -> AnomalyEvent:
-    frame = FramePacket(frame_id=1, timestamp=datetime.utcnow(), path=Path("/tmp/frame.png"))
+    frame = FramePacket(
+        frame_id=1, timestamp=datetime.utcnow(), path=Path("/tmp/frame.png")
+    )
     return AnomalyEvent(
         event_id=1,
         type=AnomalyType.BLANK,

@@ -20,8 +20,12 @@ def init_engine(db_url: str = DEFAULT_DB_URL) -> None:
     """Initialise the global SQLAlchemy engine and session factory."""
     global _engine, _SessionLocal
     if _engine is None:
-        _engine = create_engine(db_url, future=True, connect_args={"check_same_thread": False})
-        _SessionLocal = sessionmaker(bind=_engine, expire_on_commit=False, class_=Session)
+        _engine = create_engine(
+            db_url, future=True, connect_args={"check_same_thread": False}
+        )
+        _SessionLocal = sessionmaker(
+            bind=_engine, expire_on_commit=False, class_=Session
+        )
 
 
 def get_engine() -> "Engine":  # type: ignore[name-defined]

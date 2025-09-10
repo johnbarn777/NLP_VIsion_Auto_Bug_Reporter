@@ -2,8 +2,6 @@
 
 from __future__ import annotations
 
-from typing import List
-
 from sqlalchemy.orm import Session
 
 from app.schemas.models import AnomalyEvent, BugDraft, FramePacket
@@ -26,7 +24,6 @@ def save_frame(session: Session, packet: FramePacket) -> models.Frame:
         frame.timestamp = packet.timestamp
         frame.path = str(packet.path)
         frame.checksum = packet.checksum
-    session.commit()
     return frame
 
 
@@ -52,7 +49,6 @@ def save_event(session: Session, event: AnomalyEvent) -> models.Event:
         db_event.confidence = event.confidence
         db_event.metrics = event.metrics
         db_event.created_at = event.created_at
-    session.commit()
     return db_event
 
 
@@ -74,13 +70,12 @@ def save_draft(session: Session, draft: BugDraft) -> models.Draft:
         db_draft.body_md = draft.body_md
         db_draft.attachments = draft.attachments
         db_draft.created_at = draft.created_at
-    session.commit()
     return db_draft
 
 
-def list_events(session: Session) -> List[models.Event]:
-    """Return all stored events."""
-    return session.query(models.Event).all()
+def list_events(session: Session) -> list[models.Event]:
+    """Return all stored events ordered by creation time."""
+    return session.query(models.Event).order_by(models.Event.created_at).all()
 
 
 __all__ = ["save_frame", "save_event", "save_draft", "list_events"]
