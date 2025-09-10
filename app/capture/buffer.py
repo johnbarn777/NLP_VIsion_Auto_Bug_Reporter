@@ -1,4 +1,5 @@
 """Rolling buffer for recently captured frames."""
+
 from __future__ import annotations
 
 from collections import deque
@@ -10,6 +11,7 @@ from typing import Deque, List
 @dataclass
 class FrameRef:
     """Reference to a frame stored on disk."""
+
     path: Path
     ts: float
 
@@ -26,7 +28,8 @@ class RollingBuffer:
         self.fps = fps
         self.seconds = seconds
         self.capacity = fps * seconds
-        self._buffer: Deque[FrameRef] = deque()
+        # ``deque`` drops items automatically when ``maxlen`` is exceeded.
+        self._buffer: Deque[FrameRef] = deque(maxlen=self.capacity)
 
     def append(self, path: Path, ts: float) -> None:
         """Add a new frame reference to the buffer.
@@ -37,9 +40,6 @@ class RollingBuffer:
         """
 
         self._buffer.append(FrameRef(path, ts))
-        # Drop frames if we exceed capacity
-        while len(self._buffer) > self.capacity:
-            self._buffer.popleft()
 
     def to_list(self) -> List[FrameRef]:
         """Return a snapshot list of the buffer contents."""
