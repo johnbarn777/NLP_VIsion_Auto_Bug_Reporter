@@ -9,3 +9,6 @@ sqlalchemy==2.0.43
 pytest==8.4.2
 tensorflow==2.20.0
 matplotlib==3.10.6
+mss==9.0.1
+PyYAML==6.0.2
+
