@@ -13,6 +13,7 @@ from typing import Any, Dict, List, Optional
 from pydantic import BaseModel, Field
 from .types import AnomalyType, Severity
 
+
 class FramePacket(BaseModel):
     """Metadata about a captured frame saved on disk."""
 
@@ -20,6 +21,7 @@ class FramePacket(BaseModel):
     timestamp: datetime
     path: Path
     checksum: Optional[str] = None
+
 
 class AnomalyEvent(BaseModel):
     """A detected anomaly with accompanying context and metrics."""
@@ -33,9 +35,9 @@ class AnomalyEvent(BaseModel):
     created_at: datetime = Field(default_factory=datetime.utcnow)
 
 
-
 class BugDraft(BaseModel):
     """Draft report generated for an anomaly event."""
+
     event: AnomalyEvent
     title: str
     body_md: str
