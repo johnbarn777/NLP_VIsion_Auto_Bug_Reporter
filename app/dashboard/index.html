@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Bug Events Dashboard</title>
+  <style>
+    body { font-family: sans-serif; display: flex; gap: 1rem; }
+    #events { width: 30%; list-style: none; padding: 0; }
+    #events li { cursor: pointer; padding: 0.25rem; border-bottom: 1px solid #ccc; }
+    #events li:hover { background: #f0f0f0; }
+    #preview { flex: 1; }
+    #preview img { max-width: 100%; display: block; margin-bottom: 1rem; }
+  </style>
+</head>
+<body>
+  <ul id="events"></ul>
+  <div id="preview">
+    <img id="shot" alt="screenshot" />
+    <div id="md"></div>
+  </div>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script>
+    async function load() {
+      const api = "http://localhost:8000";
+      const [eventsRes, draftsRes] = await Promise.all([
+        fetch(`${api}/events`),
+        fetch(`${api}/drafts`)
+      ]);
+      const events = await eventsRes.json();
+      const drafts = await draftsRes.json();
+      const list = document.getElementById('events');
+      events.forEach(evt => {
+        const li = document.createElement('li');
+        li.textContent = `#${evt.id} ${evt.type || ''}`;
+        li.addEventListener('click', () => {
+          document.getElementById('shot').src = `${api}/media/events/${evt.id}/screenshot.png`;
+          const draft = drafts.find(d => d.event_id === evt.id);
+          document.getElementById('md').innerHTML = draft ? marked.parse(draft.body_md) : '';
+        });
+        list.appendChild(li);
+      });
+    }
+    load();
+  </script>
+</body>
+</html>
