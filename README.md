@@ -16,6 +16,26 @@ A QA helper that **captures gameplay anomalies**, grabs a **screenshot/short cli
 
 ---
 
+## Quickstart
+
+- Prereqs: Python 3.11, Poetry installed.
+- Install deps (dev included):
+  - `poetry install --with dev --no-root`
+- First event in <10 minutes:
+  - Generate tiny synthetic clips: `poetry run python scripts/generate_synthetic_anomalies.py --out data/synthetic`
+  - Run end-to-end smoke: `poetry run pytest tests/integration/test_e2e_synthetic.py -q`
+  - Exports appear under `data/` (CSV + per-event JSON).
+
+- Or run the demo script (generates, detects, saves artifacts, exports):
+  - `poetry run python scripts/demo_e2e.py --out data/synthetic [--csv] [--json] [--all]`
+  - Defaults to exporting both CSV and JSON and only the first event per type; use `--all` to export every detection.
+
+Tip: you can also run the whole test suite: `poetry run pytest`.
+
+![Demo](media/demo.gif)
+
+---
+
 ## 2) High-Level Architecture (scalable-by-design)
 
 ```
@@ -189,6 +209,31 @@ class BugDraft(BaseModel):
 
 ---
 
+## Thresholds & Calibration
+
+Detectors are configured via YAML and environment overrides.
+
+- Config file: `app/config/settings.yaml` (loaded by `app.config.load.load_settings`).
+- Env var overrides (uppercase) are parsed automatically:
+  - Blank: `BLANK_LUMA_THRESH`, `BLANK_SAT_THRESH`, `BLANK_PCT`, `BLANK_FRAMES`
+  - Freeze: `FREEZE_MAD`, `FREEZE_FRAMES`
+  - Flicker: `FLICKER_WINDOW`, `FLICKER_RATIO_THRESH`
+  - Global: `FPS`, `BUFFER_SECONDS`, `CLIP_PRE`, `CLIP_POST`
+
+Examples:
+
+- `FREEZE_FRAMES=2 poetry run pytest -k freeze`
+- `FLICKER_RATIO_THRESH=0.5 poetry run pytest -k flicker`
+- `BLANK_PCT=0.98 poetry run pytest -k blank`
+
+Calibration tips:
+
+- Start conservative to minimize false positives; decrease thresholds gradually.
+- Use `tests/test_datasets.py` against small, labeled clips to validate changes.
+- For “freeze” on fast-paced scenes, raise `FREEZE_MAD` slightly if under-triggering.
+
+---
+
 ## 8) NLP Summarization
 
 * **Prompt template** (few-shot):
@@ -262,6 +307,21 @@ pipeline:
   * `capture` (privileged for screen read), `detect`, `nlp`, `api`, `dashboard`.
 * Local mode: single Python process with asyncio queues.
 * Cross‑platform: Windows (primary), macOS (recording permission), Linux (X11/Wayland APIs).
+
+---
+
+## Datasets Usage
+
+Point the repository at local copies of the Atari AAD or Echo+ style datasets.
+
+- Via environment variables:
+  - `ATARI_AAD_ROOT=/path/to/atari`  (subfolders: `blank/`, `freeze/`, `flicker/`, ...)
+  - `ECHO_PLUS_ROOT=/path/to/echo`   (same label folders as above)
+- Or via YAML: edit `datasets/config.yaml` and set `atari_aad_root` / `echo_plus_root`.
+
+Smoke check the iterators and detectors on tiny synthetic datasets:
+
+- `poetry run pytest tests/test_datasets.py -q`
 
 ---
 
@@ -367,6 +427,14 @@ Continuous motion; no stall in render pipeline.
 * **Acceptance**: run end‑to‑end; assert one bug draft per injected anomaly.
 
 Metrics to track: precision/recall per detector, false positive rate, median time‑to‑draft.
+
+---
+
+## Known Limits
+
+- Event IDs are currently tracked per-detector; if you run multiple detectors in a single process, their `event_id` sequences are independent. When persisting to a single DB, assign unique IDs (tests handle this internally).
+- Synthetic video generation and OpenCV video I/O require `opencv-python-headless`. CI uses headless builds; local systems may require system codecs.
+- HUD glitch detection in this MVP is template-based and conservative; calibrate regions in `settings.yaml` before enabling it broadly.
 
 ---
 
