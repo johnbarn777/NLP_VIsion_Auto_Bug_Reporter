@@ -26,15 +26,28 @@ def _ensure_dir(path: Path) -> None:
 def _write_mp4(frames: List[np.ndarray], out_path: Path, fps: int) -> None:
     if not frames:
         raise ValueError("No frames to write")
-    h, w, _ = frames[0].shape
+    # Handle grayscale (2D) or color (3D) frames
+    first_frame = frames[0]
+    if first_frame.ndim == 2:
+        h, w = first_frame.shape
+        is_gray = True
+    elif first_frame.ndim == 3:
+        h, w = first_frame.shape[:2]
+        is_gray = False
+    else:
+        raise ValueError("Frames must be 2D or 3D numpy arrays")
     fourcc = cv2.VideoWriter_fourcc(*"mp4v")
     writer = cv2.VideoWriter(str(out_path), fourcc, fps, (w, h))
     if not writer.isOpened():
         raise RuntimeError(f"Failed to open writer for {out_path}")
     try:
         for img in frames:
+            # Resize if needed
             if img.shape[:2] != (h, w):
                 img = cv2.resize(img, (w, h))
+            # Convert grayscale to BGR if needed
+            if img.ndim == 2:
+                img = cv2.cvtColor(img, cv2.COLOR_GRAY2BGR)
             writer.write(img)
     finally:
         writer.release()
