@@ -41,7 +41,9 @@ from datetime import datetime, timedelta
 def _packets(paths: List[Path]) -> List[FramePacket]:
     base = datetime.utcnow()
     return [
-        FramePacket(frame_id=i + 1, timestamp=base + timedelta(milliseconds=40 * i), path=p)
+        FramePacket(
+            frame_id=i + 1, timestamp=base + timedelta(milliseconds=40 * i), path=p
+        )
         for i, p in enumerate(paths)
     ]
 
