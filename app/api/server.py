@@ -60,7 +60,7 @@ def list_drafts() -> list[dict]:
 
 
 @app.get("/media/{path:path}")
-def get_media(path: str):
+def get_media(path: str) -> FileResponse:
     """Serve media files from the local ``media`` directory."""
     file_path = (MEDIA_DIR / path).resolve()
     if not str(file_path).startswith(str(MEDIA_DIR.resolve())):
