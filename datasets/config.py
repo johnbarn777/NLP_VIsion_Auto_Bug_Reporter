@@ -20,7 +20,9 @@ def _load_yaml(path: Path) -> dict:
     return data
 
 
-def get_dataset_root(name: str, *, config_path: Optional[Path] = None) -> Optional[Path]:
+def get_dataset_root(
+    name: str, *, config_path: Optional[Path] = None
+) -> Optional[Path]:
     """Return dataset root for a given dataset name.
 
     Precedence:
@@ -59,5 +61,3 @@ def get_dataset_root(name: str, *, config_path: Optional[Path] = None) -> Option
         return Path(cfg[y_key]).expanduser().resolve()
 
     return None
-
-

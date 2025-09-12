@@ -25,14 +25,18 @@ def _gather_frames(clip_dir: Path) -> List[Path]:
     return frames
 
 
-def _iter_label_dirs(root: Path, labels: Iterable[str]) -> Iterator[Tuple[Path, AnomalyType]]:
+def _iter_label_dirs(
+    root: Path, labels: Iterable[str]
+) -> Iterator[Tuple[Path, AnomalyType]]:
     for label in labels:
         d = root / label
         if d.exists() and d.is_dir():
             yield d, LABEL_MAP[label]
 
 
-def iterate_atari_clips(root: Optional[Path] = None) -> Iterator[Tuple[List[Path], AnomalyType]]:
+def iterate_atari_clips(
+    root: Optional[Path] = None,
+) -> Iterator[Tuple[List[Path], AnomalyType]]:
     """Yield (frames, label) pairs from an Atari AAD-style dataset.
 
     Expected layout (flexible):
@@ -68,5 +72,3 @@ def iterate_atari_clips(root: Optional[Path] = None) -> Iterator[Tuple[List[Path
             elif child.is_file() and _is_image(child):
                 # single-file clip
                 yield [child], label
-
-

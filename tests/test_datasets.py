@@ -47,7 +47,9 @@ def _to_packets(frames: List[Path]) -> List[FramePacket]:
     pkts: List[FramePacket] = []
     for i, p in enumerate(frames, start=1):
         pkts.append(
-            FramePacket(frame_id=i, timestamp=now + timedelta(milliseconds=40 * i), path=p)
+            FramePacket(
+                frame_id=i, timestamp=now + timedelta(milliseconds=40 * i), path=p
+            )
         )
     return pkts
 
@@ -81,7 +83,11 @@ def test_dataset_loaders_integration(tmp_path, monkeypatch):
     monkeypatch.setenv("ECHO_PLUS_ROOT", str(echo_root))
 
     # Atari checks
-    atari_seen = {AnomalyType.BLANK: False, AnomalyType.FREEZE: False, AnomalyType.FLICKER: False}
+    atari_seen = {
+        AnomalyType.BLANK: False,
+        AnomalyType.FREEZE: False,
+        AnomalyType.FLICKER: False,
+    }
     for frames, label in iterate_atari_clips():
         if label in atari_seen and not atari_seen[label]:
             _assert_detects(label, frames)
@@ -89,10 +95,13 @@ def test_dataset_loaders_integration(tmp_path, monkeypatch):
     assert all(atari_seen.values()), "Did not see all expected Atari labels"
 
     # Echo+ checks
-    echo_seen = {AnomalyType.BLANK: False, AnomalyType.FREEZE: False, AnomalyType.FLICKER: False}
+    echo_seen = {
+        AnomalyType.BLANK: False,
+        AnomalyType.FREEZE: False,
+        AnomalyType.FLICKER: False,
+    }
     for frames, label in iterate_echo_clips():
         if label in echo_seen and not echo_seen[label]:
             _assert_detects(label, frames)
             echo_seen[label] = True
     assert all(echo_seen.values()), "Did not see all expected Echo+ labels"
-

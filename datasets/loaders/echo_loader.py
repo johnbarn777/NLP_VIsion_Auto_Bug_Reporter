@@ -25,7 +25,9 @@ def _gather_frames(clip_dir: Path) -> List[Path]:
     return frames
 
 
-def iterate_echo_clips(root: Optional[Path] = None) -> Iterator[Tuple[List[Path], AnomalyType]]:
+def iterate_echo_clips(
+    root: Optional[Path] = None,
+) -> Iterator[Tuple[List[Path], AnomalyType]]:
     """Yield (frames, label) pairs from an Echo+-style dataset.
 
     Accepts a layout similar to Atari AAD, but we do not assume a strict
@@ -57,5 +59,3 @@ def iterate_echo_clips(root: Optional[Path] = None) -> Iterator[Tuple[List[Path]
                     yield frames, label
             elif child.is_file() and _is_image(child):
                 yield [child], label
-
-

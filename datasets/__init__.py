@@ -14,4 +14,3 @@ __all__ = [
     "iterate_atari_clips",
     "iterate_echo_clips",
 ]
-
