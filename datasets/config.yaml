@@ -1,0 +1,4 @@
+## Dataset roots configuration
+# You can override these with env vars ATARI_AAD_ROOT / ECHO_PLUS_ROOT
+atari_aad_root: datasets/atari_aad
+echo_plus_root: datasets/echo_plus

@@ -106,7 +106,7 @@ To accelerate development and validate detection logic, we will integrate two pu
 
    * Contains \~300K bug-free play observations and \~500K anomalous video segments.
    * Includes anomalies highly relevant to our use case (black screen, texture corruption).
-   * Source: [arXiv paper](https://arxiv.org/pdf/2312.08418)
+   * Source: [arXiv paper] https://www.kaggle.com/datasets/aslawant/fps-video-games?.com
 
 **Implementation Plan:**
 
