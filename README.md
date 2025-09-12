@@ -431,3 +431,57 @@ fc25-bugbot/
 * Multi‑instance support via message bus.
 * Active‑learning loop: reviewer approves/edits drafts → improve prompts.
 * Integration tests in CI with headless video fixtures.
+
+---
+
+# Addendum: macOS‑first Implementation Changes (Primary Dev Machine)
+
+### A) Capture & Encoding
+
+* **Capture stack**: Prefer **ScreenCaptureKit** (macOS 12.3+) via `pyobjc` binding; fallback to **Quartz/CGDisplayStream** or `mss` for simple grabs.
+* **Run modes**: `screen` (live desktop) and `file` (offline MP4). Select via config.
+* **Encoding**: Use **ffmpeg** (via `imageio-ffmpeg`) to write H.264 (`avc1`) reliably on macOS; keep OpenCV `VideoWriter` as fallback.
+* **Permissions checklist**: System Settings → Privacy & Security → enable **Screen Recording** for Terminal/Python, **Accessibility** if input sim is added later.
+
+### B) Process Topology (macOS default)
+
+* Host macOS runs **capture** with screen permissions.
+* Docker containers run **detect + nlp + api + dashboard**.
+* IPC via localhost HTTP/ZeroMQ; configurable in `config/settings.yaml`.
+
+### C) Tooling Bootstrap (Homebrew)
+
+```
+brew update && brew install ffmpeg tesseract python@3.11 cmake pkg-config
+python3.11 -m pip install poetry
+```
+
+### D) Config Keys (new)
+
+```yaml
+pipeline:
+  mode: screen   # or file
+  fps: 15
+  transport:
+    kind: http   # or zeromq
+    endpoint: http://127.0.0.1:8765
+encoding:
+  writer: ffmpeg # or opencv
+  h264_preset: ultrafast
+```
+
+### E) Testing (macOS specifics)
+
+* Add a small **capture diagnostic** that renders FPS and verifies permission status.
+* CI runs file‑mode tests; a local `make macos-smoke` runs capture → detector on a 3‑second screen sample.
+
+### F) Commit Plan Deltas
+
+* **Commit 1 (init)** unchanged.
+* **Commit 4 now**: `feat(capture-macos): ScreenCaptureKit + Quartz fallback + ffmpeg writer`.
+* **Commit 8 note**: artifact clip creation prefers ffmpeg on macOS.
+* **Docs**: README gets a **macOS setup** section with permissions + Homebrew steps.
+
+### G) Clarification (OS Target)
+
+* **Primary target is now macOS** for active development and demos; Windows supported for gameplay capture; Linux in file‑mode for CI.
