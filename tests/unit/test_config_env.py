@@ -27,3 +27,9 @@ def test_env_override_changes_freeze_frames(monkeypatch, tmp_path):
         pkt = make_packet(img, tmp_path, i)
         evt = freeze_det.process(pkt, state)
     assert evt is not None
+
+
+def test_env_override_nested_key(monkeypatch):
+    monkeypatch.setenv("BLANK_LUMA_THRESH", "20")
+    settings = load_settings()
+    assert settings.detectors.blank.luma_thresh == 20

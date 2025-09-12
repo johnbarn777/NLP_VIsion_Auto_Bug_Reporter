@@ -78,10 +78,12 @@ def _apply_env_overrides(cfg: Dict[str, Any]) -> None:
         elif key == "buffer_seconds":
             cfg["buffer_seconds"] = _parse_env(env_val)
         elif parts[0] == "clip" and len(parts) > 1:
-            clip[parts[1]] = _parse_env(env_val)
+            subkey = "_".join(parts[1:])
+            clip[subkey] = _parse_env(env_val)
         elif parts[0] in {"blank", "freeze", "flicker"} and len(parts) > 1:
             det = detectors.setdefault(parts[0], {})
-            det[parts[1]] = _parse_env(env_val)
+            subkey = "_".join(parts[1:])
+            det[subkey] = _parse_env(env_val)
 
 
 def load_settings(path: Path | None = None) -> Settings:
