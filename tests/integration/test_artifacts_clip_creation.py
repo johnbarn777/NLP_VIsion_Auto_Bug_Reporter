@@ -55,4 +55,3 @@ def test_artifacts_creates_clip_with_cv2(tmp_path: Path):
     screenshot = out_dir / "screenshot.png"
     assert screenshot.exists()
     assert clip.exists() and clip.stat().st_size > 0
-

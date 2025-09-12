@@ -23,7 +23,9 @@ def _make_draft(tmp_path: Path, eid: int) -> BugDraft:
         metrics={"value": 1.0},
         created_at=datetime.utcnow(),
     )
-    return BugDraft(event=event, title=f"Bug {eid}", body_md="Body", attachments=[str(shot)])
+    return BugDraft(
+        event=event, title=f"Bug {eid}", body_md="Body", attachments=[str(shot)]
+    )
 
 
 def test_exporter_writes_header_once_and_appends(tmp_path: Path, monkeypatch):
@@ -51,4 +53,3 @@ def test_exporter_writes_header_once_and_appends(tmp_path: Path, monkeypatch):
     assert j1.exists() and j2.exists()
     data = json.loads(j1.read_text())
     assert data["title"] == d1.title
-

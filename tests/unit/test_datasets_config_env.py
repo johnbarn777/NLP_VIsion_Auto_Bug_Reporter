@@ -30,4 +30,3 @@ echo_plus_root: {e}
     # Even with config_path provided, env should take precedence
     assert get_dataset_root("atari", config_path=yaml_cfg) == env_a.resolve()
     assert get_dataset_root("echo", config_path=yaml_cfg) == env_e.resolve()
-

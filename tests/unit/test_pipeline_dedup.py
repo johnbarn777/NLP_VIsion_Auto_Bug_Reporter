@@ -18,7 +18,10 @@ def _make_frame(path: Path, val: int = 0) -> None:
 
 def test_pipeline_deduplicates_same_event_from_multiple_detectors(tmp_path):
     # Two blank detectors in the same pipeline; both will detect on the same frame sequence
-    dets = [BlankDetector(min_frames=1, pct=0.99), BlankDetector(min_frames=1, pct=0.99)]
+    dets = [
+        BlankDetector(min_frames=1, pct=0.99),
+        BlankDetector(min_frames=1, pct=0.99),
+    ]
     pipeline = DetectorPipeline(dets)
 
     # Write one almost-black frame (min_frames=1 so immediate detection)
@@ -29,4 +32,3 @@ def test_pipeline_deduplicates_same_event_from_multiple_detectors(tmp_path):
     events = pipeline.process(pkt)
     # Without dedup we'd have two events; expect only one
     assert len(events) == 1
-

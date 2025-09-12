@@ -21,4 +21,3 @@ echo_plus_root: {echo_root}
 
     assert get_dataset_root("atari", config_path=cfg) == atari_root.resolve()
     assert get_dataset_root("echo", config_path=cfg) == echo_root.resolve()
-

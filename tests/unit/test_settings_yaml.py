@@ -41,4 +41,3 @@ detectors:
     assert st.detectors.freeze.frames == 6
     assert st.detectors.flicker.window == 10
     assert abs(st.detectors.flicker.ratio_thresh - 0.7) < 1e-9
-

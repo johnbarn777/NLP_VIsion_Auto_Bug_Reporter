@@ -186,9 +186,10 @@ def main() -> None:
     if not export_csv and not export_json:
         export_csv = export_json = True
 
-    run_demo(args.out, export_csv=export_csv, export_json=export_json, all_events=args.all)
+    run_demo(
+        args.out, export_csv=export_csv, export_json=export_json, all_events=args.all
+    )
 
 
 if __name__ == "__main__":
     main()
-

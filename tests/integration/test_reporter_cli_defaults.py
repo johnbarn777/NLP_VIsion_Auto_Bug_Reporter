@@ -50,4 +50,3 @@ def test_cli_defaults_export_both(tmp_path, monkeypatch):
 
     assert (tmp_path / "data" / "reports.csv").exists()
     assert (tmp_path / "data" / f"report_{draft.event.event_id}.json").exists()
-

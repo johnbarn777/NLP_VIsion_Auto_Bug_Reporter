@@ -31,15 +31,16 @@ def test_artifacts_copy_screenshot_when_cv2_missing(tmp_path, monkeypatch):
     monkeypatch.setattr(artifacts, "cv2", None)
 
     evt = _event_for_path(src, 42)
-    out_dir = artifacts.save_event_artifacts(evt, events_dir=tmp_path / "events", artifacts_dir=tmp_path / "artifacts")
+    out_dir = artifacts.save_event_artifacts(
+        evt, events_dir=tmp_path / "events", artifacts_dir=tmp_path / "artifacts"
+    )
 
     shot = out_dir / "screenshot.png"
     assert shot.exists()
     assert shot.read_bytes() == b"img"  # copied
 
     # Metrics file contains our event id
-    metrics_path = (tmp_path / "artifacts" / "metrics.json")
+    metrics_path = tmp_path / "artifacts" / "metrics.json"
     data = json.loads(metrics_path.read_text())
     assert "42" in data
     assert data["42"]["k"] == 1.0
-
