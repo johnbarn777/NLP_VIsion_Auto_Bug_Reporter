@@ -12,6 +12,7 @@ from app.detectors.pipeline import DetectorPipeline
 from app.schemas.models import FramePacket
 from app.schemas.types import AnomalyType
 from scripts.generate_synthetic_anomalies import generate_synthetic_anomalies
+from datetime import datetime, timedelta
 
 
 def _extract_frames(video_path: Path, out_dir: Path) -> List[Path]:
@@ -33,9 +34,6 @@ def _extract_frames(video_path: Path, out_dir: Path) -> List[Path]:
     finally:
         cap.release()
     return paths
-
-
-from datetime import datetime, timedelta
 
 
 def _packets(paths: List[Path]) -> List[FramePacket]:
