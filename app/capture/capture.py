@@ -8,8 +8,8 @@ from pathlib import Path
 from typing import Dict, Optional
 
 import numpy as np
-import yaml
 
+from app.config.load import load_settings
 from .buffer import RollingBuffer
 
 try:  # pragma: no cover - optional dependency
@@ -26,13 +26,6 @@ try:  # pragma: no cover - optional dependency
     from PIL import Image
 except Exception:  # pragma: no cover - executed when Pillow unavailable
     Image = None
-
-
-def load_settings() -> Dict:
-    """Load capture settings from YAML configuration."""
-    cfg_path = Path(__file__).resolve().parent.parent / "config" / "settings.yaml"
-    with open(cfg_path, "r", encoding="utf-8") as fh:
-        return yaml.safe_load(fh)
 
 
 def grab(region: Optional[Dict[str, int]] = None) -> np.ndarray:
@@ -68,9 +61,9 @@ def save_frame(frame: np.ndarray, path: Path) -> None:
 def capture_loop() -> None:
     """Run the capture loop using configured settings."""
     settings = load_settings()
-    fps: int = int(settings.get("fps", 5))
-    buffer_seconds: int = int(settings.get("buffer_seconds", 5))
-    regions = settings.get("regions", {})
+    fps: int = int(settings.fps)
+    buffer_seconds: int = int(settings.buffer_seconds)
+    regions = settings.regions
     region = regions.get("full") if isinstance(regions, dict) else None
 
     session = datetime.utcnow().strftime("%Y%m%d_%H%M%S")

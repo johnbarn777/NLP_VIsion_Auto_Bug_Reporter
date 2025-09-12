@@ -7,6 +7,7 @@ from typing import Dict, List, Sequence, Set, Tuple, Type
 
 import yaml
 
+from app.config.load import Settings, load_settings
 from app.schemas.models import AnomalyEvent, FramePacket
 
 from .base import Detector, DetectorState
@@ -33,7 +34,9 @@ class DetectorPipeline:
         self._seen: Set[Tuple[str, int]] = set()
 
     @classmethod
-    def from_yaml(cls, path: Path | None = None) -> "DetectorPipeline":
+    def from_yaml(
+        cls, path: Path | None = None, *, settings: Settings | None = None
+    ) -> "DetectorPipeline":
         """Instantiate detectors based on a YAML configuration."""
         if path is None:
             path = Path(__file__).resolve().parent.parent / "config" / "detectors.yaml"
@@ -44,10 +47,35 @@ class DetectorPipeline:
         else:  # fallback to all known detectors
             order = list(NAME_MAP.keys())
 
+        settings = settings or load_settings()
+        det_cfg = settings.detectors
+
         detectors: List[Detector] = []
         for name in order:
             factory = NAME_MAP.get(name)
-            if factory is not None:
+            if factory is None:
+                continue
+            if name == "freeze":
+                cfg_obj = det_cfg.freeze
+                detectors.append(
+                    factory(mad_thresh=cfg_obj.mad, min_frames=cfg_obj.frames)
+                )
+            elif name == "blank":
+                cfg_obj = det_cfg.blank
+                detectors.append(
+                    factory(
+                        luma_thresh=cfg_obj.luma_thresh,
+                        sat_thresh=cfg_obj.sat_thresh,
+                        pct=cfg_obj.pct,
+                        min_frames=cfg_obj.frames,
+                    )
+                )
+            elif name == "flicker":
+                cfg_obj = det_cfg.flicker
+                detectors.append(
+                    factory(window=cfg_obj.window, ratio_thresh=cfg_obj.ratio_thresh)
+                )
+            else:
                 detectors.append(factory())
         return cls(detectors)
 

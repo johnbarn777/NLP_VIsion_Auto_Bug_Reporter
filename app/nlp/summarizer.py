@@ -1,31 +1,19 @@
 from __future__ import annotations
 
-from pathlib import Path
 from typing import Dict
 
-import yaml
-
+from app.config.load import load_settings
 from app.schemas.models import AnomalyEvent, BugDraft
 from .templates import DEFAULT_TEMPLATE, TEMPLATES
 
-# Load simple context from config/settings.yaml
-_CONFIG_PATH = Path(__file__).resolve().parents[1] / "config" / "settings.yaml"
 
-
-def _load_settings(path: Path) -> Dict[str, object]:
-    if path.exists():
-        with open(path, "r", encoding="utf-8") as fh:
-            return yaml.safe_load(fh) or {}
-    return {}
-
-
-_SETTINGS = _load_settings(_CONFIG_PATH)
+_SETTINGS = load_settings()
 
 
 def _environment_context() -> str:
     """Compose a small environment string from config settings."""
-    fps = _SETTINGS.get("fps")
-    buffer_s = _SETTINGS.get("buffer_seconds")
+    fps = getattr(_SETTINGS, "fps", None)
+    buffer_s = getattr(_SETTINGS, "buffer_seconds", None)
     parts = []
     if fps is not None:
         parts.append(f"fps={fps}")
