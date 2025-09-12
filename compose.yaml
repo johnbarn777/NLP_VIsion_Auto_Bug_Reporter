@@ -1,0 +1,24 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: uvicorn app.api:app --host 0.0.0.0 --port 8000
+    working_dir: /
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./data:/data
+    ports:
+      - "8000:8000"
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    command: python -m app.main
+    working_dir: /
+    environment:
+      - PYTHONPATH=/app
+    volumes:
+      - ./data:/data
+volumes: {}

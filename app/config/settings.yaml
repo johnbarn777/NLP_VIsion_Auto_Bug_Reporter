@@ -1,8 +1,23 @@
 fps: 5
 buffer_seconds: 5
+clip:
+  pre: 2
+  post: 2
 regions:
   full:
     top: 0
     left: 0
     width: 1920
     height: 1080
+detectors:
+  blank:
+    luma_thresh: 10
+    sat_thresh: 15
+    pct: 0.95
+    frames: 3
+  freeze:
+    mad: 1.0
+    frames: 3
+  flicker:
+    window: 8
+    ratio_thresh: 0.6

@@ -1,6 +1,0 @@
-services:
-  app:
-    build: .
-    command: python -m app.main
-    volumes:
-      - ..:/app
