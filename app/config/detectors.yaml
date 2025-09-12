@@ -1,0 +1,4 @@
+detectors:
+  - blank
+  - freeze
+  - flicker
